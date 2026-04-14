@@ -1,0 +1,94 @@
+:root {
+  /* ===== Color System ===== */
+  --color-primary: #ce1934;       /* 와인/버건디 계열 (브랜드 핵심) */
+  --color-primary-dark: #4a141c;
+  --color-primary-light: #b33046;
+
+  --color-secondary: #d9c7a1;     /* 베이지/디저트 톤 */
+  --color-accent: #c69c6d;        /* 골드 느낌 */
+
+  --color-bg: #ffffff;
+  --color-bg-alt: #f7f7f7;
+  --color-surface: #fafafa;
+
+  --color-text: #111111;
+  --color-text-muted: #666666;
+  --color-border: #e5e5e5;
+
+  --color-success: #2e7d32;
+  --color-error: #d32f2f;
+  --color-warning: #f9a825;
+
+
+  /* ===== Typography ===== */
+  --font-family-base: 'Noto Sans KR', sans-serif;
+  --font-family-heading: 'Playfair Display', serif;
+
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 20px;
+  --font-size-xl: 28px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  --line-height-base: 1.5;
+  --line-height-heading: 1.2;
+
+
+  /* ===== Spacing ===== */
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+
+  /* ===== Radius ===== */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+
+  /* ===== Shadow ===== */
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 10px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 20px rgba(0,0,0,0.12);
+
+
+  /* ===== Transition ===== */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.25s ease;
+  --transition-slow: 0.4s ease;
+
+
+  /* ===== Z-index ===== */
+  --z-header: 1000;
+  --z-modal: 2000;
+  --z-tooltip: 3000;
+}
+/* 컨포넌트용 확장 변수 */
+/* :root {
+  /* Button */
+  --btn-bg: var(--color-primary);
+  --btn-bg-hover: var(--color-primary-dark);
+  --btn-text: #fff;
+  --btn-radius: var(--radius-md);
+
+  /* Card */
+  --card-bg: #fff;
+  --card-padding: var(--spacing-md);
+  --card-shadow: var(--shadow-sm);
+
+  /* Input */
+  --input-border: var(--color-border);
+  --input-focus: var(--color-primary);
+
+  /* Header */
+  --header-height: 64px;
+  --header-bg: #fff;
+} */

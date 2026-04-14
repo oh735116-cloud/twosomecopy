@@ -1,17 +1,15 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: "Malgun Gothic", sans-serif;
-  background: #F5F5F5;
+  font-family: var(--font-family-base);
+  background: var(--color-bg);
   max-width: 710px;
   margin: 0 auto;
   /* ★ fixed 헤더 + 하단 탭바 공간 확보 */
 /* header */
 }
-img{
-    width: 100%;
-    height: 100%;
-}
+
+
 header{
     position: relative;
     height: 50px;
@@ -25,15 +23,15 @@ header{
 }
 .header-btn{
     background: none;
-    border: 0 solid white;
+    border: 0 solid var(--color-border);
     padding: 14px; 
 }
 .header-logo{
     font-size: 13px;
     font-weight: 600;
-    border: 0 solid white;
+    border: 0 solid var(--color-border);
     background: none;
-    color: black;
+    color: var(--color-text);
     cursor: pointer;
     position: absolute;
     padding: 18px;
@@ -44,12 +42,15 @@ header{
 /* /main/ */
 /* 첫번째 섹션 사진 회원가입 로그인 */
 #first-section{
-    background-color: rgb(214, 214, 214);
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-bg);
 }
 .page{
     position: relative;
     top: 50px;
-    background: rgb(214, 214, 214);
+    background: var(--color-bg-alt);
+    height: 100%;
 }
 .pagein{
     background: rgb(109, 109, 109, 0.7);
@@ -66,15 +67,14 @@ header{
 }
 
 .login{
-    background-color: rgb(214, 214, 214);
+    background-color: var(--color-bg-alt);
     padding: 0px;
     height: 70px;
-    border: 0;
+    border: 0 solid var(--color-bg-alt);
     cursor: pointer;
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 5px;
     align-items: flex-start;
     margin-top: 60px;
     
@@ -82,17 +82,18 @@ header{
 .login-twosome{
     display: flex;
     flex-direction: row;
-    gap: 5px;
+    gap: 3px;
 }
 .twosome-app{
-    background: rgb(214, 214, 214);
+    background: var(--color-bg-alt);
     padding-left: 20px;
-    color: red;
+    color: var(--color-primary);
+    font-weight: var(--font-weight-medium);
 }
 .login-app{
-    background: rgb(214, 214, 214);
+    background: var(--color-bg-alt);
     padding-left: 20px;
-    font-size: 20px;
+    font-size: var(--font-size-lg);
     font-weight: 700;
 }
 /* 두번쨰 섹션 투썸을 선물하세요 */
@@ -100,17 +101,18 @@ header{
     display: flex;
     justify-content: space-between;
     padding: 30px 20px 20px 10px;
-    background: white;
+    background: var(--color-bg);
 }
 .present-yo{
-    font-size: 20px;
-    font-weight: 900;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    margin-left: var(--spacing-xs);
 }
 .present-more{
     border: 0;
     cursor: pointer;
-    background: white;
-    font-weight: 600;
+    background: var(--color-bg);
+    font-weight: var(--font-weight-medium);
 }
 
 .money{
@@ -121,9 +123,15 @@ header{
 }
 .mo{
     border: 0;
-    background: black;
-    color: #F5F5F5;
-    border-radius: 20%;
-    padding: 5px;
-
+    background: var(--color-bg);
+    color: var(--color-text);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xs);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--spacing-md);
+    cursor: pointer;
+}
+.mo:focus{
+    background: var(--color-text);
+    color: var(--color-bg);
 }
