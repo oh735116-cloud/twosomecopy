@@ -1,0 +1,14 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: "Malgun Gothic", sans-serif;
+  background: #f5f5f5;
+  max-width: auto;
+  margin: 0 auto;
+  /* ★ fixed 헤더 + 하단 탭바 공간 확보 */
+  padding-top: auto;
+  padding-bottom: auto;
+}
