@@ -1,0 +1,70 @@
+if(typeof NetFunnel == "object"){
+
+	/*
+	//blockSkin
+	NetFunnel.SkinUtil.add('blockSkin',{
+		prepareCallback:function(){
+		},
+		updateCallback:function(percent,nwait,totwait,timeleft){
+		},
+		htmlStr:'<div id="NetFunnel_Skin_Top" style="background-color:white;border:1px solid black; width:300px"> \
+			<div style="text-align:right;padding-top:5px;padding-right:5px;;text-align:center;"> \
+				<div style="text-align:center;font-size:9pt;color:black"><b><span style="color:black"> 해당 상품은 조기 소진되었습니다. </span> \
+				<div style="text-align:center;font-size:9pt;color:black"><b><span style="color:black"> 10:00 부터 서비스 가능합니다. </span> \
+					<br><br><br><span onclick="NetFunnel_sendStop();" style="cursor:pointer">[닫기]</span> </b><br><br> \
+				</div> \
+			</div>'
+	},'mobile');
+
+	//ipBlockSkin
+	NetFunnel.SkinUtil.add('ipBlockSkin',{
+		prepareCallback:function(){
+		},
+		updateCallback:function(percent,nwait,totwait,timeleft){
+		},
+		htmlStr:'<div id="NetFunnel_Skin_Top" style="background-color:white;border:1px solid black; width:300px"> \
+			<div style="text-align:right;padding-top:5px;padding-right:5px;;text-align:center;"> \
+				<div style="text-align:center;font-size:9pt;color:black"><b><span style="color:black"> 비정상적인 시도가 감지되어 접근을 차단합니다!!! </span> \
+					<br><br><br><span onclick="NetFunnel_sendStop();" style="cursor:pointer">[닫기]</span> </b><br><br> \
+				</div> \
+			</div>'
+	},'mobile');
+	*/
+
+	//twosome skin
+	NetFunnel.SkinUtil.add('twosome',{
+		prepareCallback:function(){
+			/*var progress_print = document.getElementById("Progress_Print");
+			progress_print.innerHTML="0 % (0/0) - 0 sec";*/
+			
+			var prgbar = document.getElementById("prgbar");
+			prgbar.value = 0;
+		},
+		updateCallback:function(percent,nwait,totwait,timeleft){
+			/*var progress_print = document.getElementById("Progress_Print");
+			var prog = totwait - nwait;
+			progress_print.innerHTML = percent+" % ("+prog+"/"+totwait+") - "+timeleft+" sec";*/
+			
+			var prgbar = document.getElementById("prgbar");
+			prgbar.value = percent;
+		},
+		htmlStr:'<div id="NetFunnel_Skin_Top" style="width:100%;height:100%;"> \
+					<div style="text-align:center;padding-top:0px;padding-right:5px;line-height:25px;width:169px;margin:0 auto"> \
+						<img style="width:100%;" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAyOC4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjAgMCAyMDQgMTIiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDIwNCAxMjsiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4NCgkuc3Qwe2ZpbGw6IzIyMjIyMjt9DQo8L3N0eWxlPg0KPGc+DQoJPHBhdGggY2xhc3M9InN0MCIgZD0iTTgxLjMsNS4yYy0wLjUtMC4xLTEuMi0wLjMtMS44LTAuNGMtMC4xLDAtMC4yLTAuMS0wLjQtMC4xYy0wLjIsMC0wLjQtMC4xLTAuNi0wLjFjLTEuMi0wLjItMS45LTAuNS0xLjktMS4xDQoJCWMwLTAuMiwwLjEtMC41LDAuMy0wLjdjMC40LTAuNCwxLTAuNiwxLjgtMC42aDAuMWMxLjgsMCwzLjUsMC45LDQuMywxLjZMODMuMyw0bDEtMmwtMC4xLTAuMUM4MywxLjEsODEuNSwwLjIsNzksMC4yDQoJCWMtMS41LDAtMywwLjYtMy45LDEuNWMtMC42LDAuNi0wLjksMS40LTAuOSwyLjJjMC4xLDIuMywyLjYsMyw1LjYsMy41YzEuMiwwLjIsMi4xLDAuNCwyLjIsMS4xYzAsMC4yLTAuMSwwLjUtMC4zLDAuNw0KCQljLTAuNCwwLjQtMS4zLDAuNy0yLjMsMC43aC0wLjFjLTIsMC0zLjctMS4yLTQuMi0xLjdMNzQuOCw4bC0wLjksMi4xbDAuMSwwLjFjMS41LDEsMy42LDEuNyw1LjIsMS43YzEuOSwwLDMuNC0wLjUsNC4zLTEuNA0KCQljMC42LTAuNiwwLjktMS40LDAuOS0yLjNDODQuMyw2LjYsODMuNCw1LjcsODEuMyw1LjJ6Ii8+DQoJPHBhdGggY2xhc3M9InN0MCIgZD0iTTY2LjUsMC4yYy0yLjQsMC0zLjgsMS00LjYsMS44Yy0xLDEtMS42LDIuNS0xLjYsNGMwLDEuNiwwLjcsMy4xLDEuOSw0LjJjMS4yLDEsMi43LDEuNiw0LjQsMS42DQoJCWMxLjYsMCwzLjItMC42LDQuNC0xLjZjMS4yLTEuMSwxLjktMi42LDEuOS00LjJjMC0xLjUtMC42LTMtMS42LTRDNzAsMC44LDY4LjQsMC4yLDY2LjUsMC4yeiBNNjkuMiw4LjZjLTAuNywwLjctMS43LDEuMS0yLjcsMS4xDQoJCWMtMSwwLTItMC40LTIuNy0xLjFDNjMuMSw3LjksNjIuNyw3LDYyLjcsNmMwLTIuMiwyLTMuNywzLjgtMy43YzEuOCwwLDMuOCwxLjUsMy44LDMuN0M3MC4zLDcsNjkuOSw3LjksNjkuMiw4LjZ6Ii8+DQoJPHBvbHlnb24gY2xhc3M9InN0MCIgcG9pbnRzPSI1Ny40LDAuNiA1NSw3LjkgNTIuNiwwLjYgNTAuMiwwLjYgNDcuOCw3LjkgNDUuNCwwLjYgNDIuOSwwLjYgNDYuNiwxMS4zIDQ2LjcsMTEuNCA0OSwxMS40IDUxLjQsNC4zIA0KCQk1My44LDExLjQgNTYuMiwxMS40IDU5LjksMC42IAkiLz4NCgk8cG9seWdvbiBjbGFzcz0ic3QwIiBwb2ludHM9IjMwLjIsMi42IDM0LjgsMi42IDM0LjgsMTEuNCAzNy4zLDExLjQgMzcuMywyLjYgNDEuOCwyLjYgNDEuOCwwLjYgMzAuMiwwLjYgCSIvPg0KCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xOC44LDAuNmwtNSwxMC44aDIuNWwxLjItMi43aDQuOWwxLjIsMi43aDIuNmwtNS0xMC44SDE4Ljh6IE0xOC41LDYuN0wyMCwzLjNsMS42LDMuNUgxOC41eiIvPg0KCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xNzcuNiw4LjFjLTAuOSwxLTIuMiwxLjYtMy42LDEuNmgwQzE3MS44LDkuNywxNzAsOCwxNzAsNmMwLTEsMC40LTEuOSwxLTIuNmMwLjctMC43LDEuNy0xLjEsMi44LTEuMQ0KCQljMS40LDAsMi42LDAuNSwzLjcsMS42bDAuMSwwLjFsMS4yLTEuOUwxNzguOCwyYy0xLjUtMS4yLTMuMS0xLjktNC45LTEuOWMtMS41LDAtMywwLjYtNC4yLDEuNWMtMSwwLjgtMi4xLDIuMi0yLjEsNC40DQoJCWMwLDMuNiwzLjEsNS42LDYuMSw1LjhjMC4xLDAsMC4yLDAsMC4zLDBjMS44LDAsMy41LTAuNyw0LjktMmwwLjEtMC4xbC0xLjMtMS44TDE3Ny42LDguMXoiLz4NCgk8cG9seWdvbiBjbGFzcz0ic3QwIiBwb2ludHM9IjE0Ni4zLDAuNiAxNDMuOSwwLjYgMTQzLjksMTEuNCAxNTMuMywxMS40IDE1My4zLDkuNCAxNDYuMyw5LjQgCSIvPg0KCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik05MS45LDAuMmMtMi40LDAtMy44LDEtNC42LDEuOGMtMSwxLTEuNiwyLjUtMS42LDRjMCwxLjYsMC43LDMuMSwxLjksNC4yYzEuMiwxLDIuNywxLjYsNC40LDEuNg0KCQljMS42LDAsMy4yLTAuNiw0LjQtMS42YzEuMi0xLjEsMS45LTIuNiwxLjktNC4yYzAtMS41LTAuNi0zLTEuNi00Qzk1LjQsMC44LDkzLjgsMC4yLDkxLjksMC4yeiBNOTQuNiw4LjYNCgkJYy0wLjcsMC43LTEuNiwxLjEtMi43LDEuMWMtMSwwLTItMC40LTIuNy0xLjFDODguNSw3LjksODguMSw3LDg4LjEsNmMwLTIuMiwyLTMuNywzLjgtMy43YzEuOCwwLDMuOCwxLjUsMy44LDMuNw0KCQlDOTUuNyw3LDk1LjMsNy45LDk0LjYsOC42eiIvPg0KCTxwb2x5Z29uIGNsYXNzPSJzdDAiIHBvaW50cz0iMTgzLjQsOS40IDE4My40LDYuNyAxODkuOCw2LjcgMTg5LjgsNC43IDE4My40LDQuNyAxODMuNCwyLjYgMTkwLDIuNiAxOTAsMC42IDE4MSwwLjYgMTgxLDExLjQgDQoJCTE5MC4yLDExLjQgMTkwLjIsOS40IAkiLz4NCgk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTU5LjksMC42bC01LDEwLjhoMi42bDEuMi0yLjdoNC45bDEuMiwyLjdoMi42bC01LTEwLjhIMTU5Ljl6IE0xNTkuNSw2LjdsMS42LTMuNWwxLjYsMy41SDE1OS41eiIvPg0KCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xNDAuNiwxLjJjLTAuNy0wLjUtMS43LTAuNy0zLjEtMC43aC02LjF2MTAuOWgyLjVWOGgzLjVjMS4zLDAsMi4zLTAuMiwzLjEtMC43YzEtMC42LDEuNS0xLjYsMS41LTMNCgkJQzE0Mi4xLDIuOCwxNDEuNiwxLjgsMTQwLjYsMS4yeiBNMTM3LjgsNS45SDEzNFYyLjZoMy45YzAuNCwwLDAuOSwwLjEsMS4yLDAuNGMwLjQsMC4zLDAuNiwwLjcsMC42LDEuMw0KCQlDMTM5LjYsNS40LDEzOC43LDUuOSwxMzcuOCw1Ljl6Ii8+DQoJPHBvbHlnb24gY2xhc3M9InN0MCIgcG9pbnRzPSIxMDYuMiw2LjIgMTAzLDAuNiAxMDAuMSwwLjYgMTAwLjEsMTEuNCAxMDIuNSwxMS40IDEwMi41LDQuMiAxMDUuNiw5LjMgMTA2LjksOS4zIDExMC4xLDQuMiANCgkJMTEwLjEsMTEuNCAxMTIuNSwxMS40IDExMi41LDAuNiAxMDkuNiwwLjYgCSIvPg0KCTxwb2x5Z29uIGNsYXNzPSJzdDAiIHBvaW50cz0iMTE3LjMsNi43IDEyMy43LDYuNyAxMjMuNyw0LjcgMTE3LjMsNC43IDExNy4zLDIuNiAxMjMuOSwyLjYgMTIzLjksMC42IDExNC45LDAuNiAxMTQuOSwxMS40IA0KCQkxMjQuMSwxMS40IDEyNC4xLDkuNCAxMTcuMyw5LjQgCSIvPg0KPC9nPg0KPC9zdmc+DQo="> \
+					</div> \
+					<div style="margin-top:24px;"> \
+						<div style="letter-spacing:-2px;box-sizing:initial;text-align:center;font-size:12pt;color:#001f6c;"><b style="font-size:28px;color:#000;">지금은 접속자가 많아<br>잠시&nbsp;<span style="color:#d50037">대기중</span>입니다.</b></div> \
+						<div style="box-sizing:initial;text-align:center;letter-spacing:-1px;font-size:14px;line-height:19px;color:#707070;margin-top:14px;">잠시만 기다려 주세요.</div> \
+						<div style="box-sizing:initial;text-align:center;font-size:14px;color:#7b7b7b;padding-top:90px;letter-spacing:-1px;" class="redText"><b>예상 대기시간 <span id="NetFunnel_Loading_Popup_TimeLeft" class="%M분 %02S초^ ^false" style="display:block;margin-top:8px;text-decoration: none !important;font-size:30px;font-weight:bold;color:#d50037;"></span></b></div> \
+						<div style="box-sizing:initial;text-align:center;letter-spacing:-1px;font-size:14px;line-height:19px;color:#707070;margin-top:10px;">대기인원 \
+							<b><span id="NetFunnel_Loading_Popup_Count" class="redText" style="letter-spacing:-1px;font-size:14px;color:#d50037;"></span>명</b> \
+						</div> \
+						<progress id="prgbar" style="width:100%;font-size: 1.0rem" value="0" min="0" max="100"></progress>\
+						<div style="background-color:#fff;padding-bottom:8px;overflow:hidden;width:100%"> \
+						<div style="padding-left:5px"> \
+							<div style="letter-spacing:-1px;box-sizing:initial;text-align:center;font-size:14px;line-height:19px;color:#707070;margin-top:20px;">홀케이크 예약을 원하시는 고객분께서는<br>인근 가까운 매장으로 방문 부탁드립니다. </div>\
+						</div> \
+					</div> '
+	},'mobile');
+	
+}

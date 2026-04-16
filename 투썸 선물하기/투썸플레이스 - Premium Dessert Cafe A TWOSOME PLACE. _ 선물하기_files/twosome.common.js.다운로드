@@ -1,0 +1,575 @@
+var locationTimer = null; // 앱 위치 3초 초과시 기본위치 사용 추가
+var isLocationResolved = false; // 앱 위치 3초 초과시 기본위치 사용 추가
+
+var twosome = {
+	
+	/* 스크롤 여부 */	
+	isScroll : false,
+	scrollOffset : 0,
+	lat : "37.56640302257055",
+	longi : "126.99727928611526",
+	locYn : "",
+	/* 위치정보설정 */
+	setLocInfo : function(position) {
+		var lat = position.latitude;
+	    var longi = position.longitude;
+    	var locYn ="";
+	    if(_isAppAndroid){
+	    	// 앱배포시 주석 해제 필요
+	    	locYn = position.LocationPermission;
+	    }
+	    
+		if(null != lat) this.lat = lat;
+		if(null != longi) this.longi = longi;
+		if(null != locYn) this.locYn = locYn;
+		return true;
+	},
+	/* 위치정보조회 */
+	getLocInfo : function() {
+		var loc = new Object();
+		loc.lat = this.lat; //"37.4953407";
+		loc.longi = this.longi; //"127.0295653";
+		loc.locYn = this.locYn;
+		return loc;
+	}, 
+	putMsgP : function(id, msg, type) {
+		$('#' + id).removeClass();
+		$('#' + id).parent('span').removeClass('error');
+		$('#' + id).parent('span').removeClass('pass-ok');
+
+		if(type == 'ok'){
+			$('#' + id).addClass('txt_pass_ok');
+			$('#' + id).parent('span').addClass('pass-ok');
+		} else if (type == 'error'){
+			$('#' + id).addClass('txt_error');
+			$('#' + id).parent('span').addClass('error');
+		}
+		
+		$('#' + id).prop('innerHTML', msg);
+	},
+	certPopup : function(obj) {
+		window.open('', 'popupChk', 'width=500, height=550, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+		obj.action = "https://nice.checkplus.co.kr/CheckPlusSafeModel/checkplus.cb";
+		obj.target = "popupChk";
+		obj.submit();
+	},
+	/* 위치정보수집 */
+	collectLocInfo : function() {
+		var isPosition = loadPostNone();
+        isPosition.done(function(msg) {
+            
+        	$.ajax({
+            	 type: "POST"
+                ,url: "/common/collectLocInfoAjax.json"
+                ,dataType: "json"
+                ,data: { "currLocLait": twosome.getLocInfo().lat, "currLocLngt": twosome.getLocInfo().longi}
+                ,success:function(data) {
+                	//console.log("위치정보 수집성공 >>>>> ");
+                }
+                ,error : function(){
+                	//console.log(">>>>>위치정보 수집오류>>>>> ");
+                }
+            });
+            
+        });
+	},
+	/* 로그인여부체크 */
+	isLogin : function(){
+		var isLogin = false;
+		$.ajax({
+			 type : "POST"
+			,url : "/common/checkedSessionAjax.json"
+			,async : false
+			,success : function(data) {
+				isLogin = data.isLogin;
+			}
+		});
+		
+		return isLogin;
+	}
+};
+
+
+/*
+ * 알럿표시
+ */
+var alertPopup = function(msg) {
+	toastAlert(msg);
+}
+
+/**
+ * 로그인 후처리
+ * 현재 위치의 좌표를 얻어서 내 매장 설정
+ */
+var loginProcAfter = function(retUrl) {
+	var isPosition = loadPostNone();
+	isPosition.done(function(msg) {
+		var lat       	= twosome.getLocInfo().lat;			//위도
+	    var longi     	= twosome.getLocInfo().longi;		//경도
+
+	    //위치정보수집(현재 위도, 경도 insert)
+	    twosome.collectLocInfo();
+
+		// 2024-07-04 세션 빼기 기능 테스트 하단은 주석 현재부분 추가
+		if(retUrl == ''){
+			location.replace('/main.do'); // 로그인 후 메인페이지로 이동
+		} else {
+			// 보안정책으로 인한 특수문자 변경
+			retUrl = retUrl.replaceAll("\\\\","");
+			retUrl = retUrl.replaceAll("@","");
+			retUrl = retUrl.replaceAll("\\/\\/","");
+			retUrl = retUrl.replaceAll("\\.\\.","");
+			retUrl = retUrl.replaceAll("\\:","");
+			
+			//alert(retUrl);
+			location.replace(retUrl);
+		}
+/*
+		$.ajax({
+			type: "POST",
+			url: "/so/getStoreInfoAjax.json",
+			dataType: "json",
+			async : false ,
+			data: {"lat":lat,"longi":longi},
+			success:function(data) {
+				if(retUrl == ''){
+					location.replace('/main.do'); // 로그인 후 메인페이지로 이동
+				} else {
+					location.replace(retUrl);
+				}
+	 		}
+			,error:function(e){
+				toastAlert('주문가능한 매장이 없습니다.');
+				if(retUrl == ''){
+					location.replace('/main.do'); // 로그인 후 메인페이지로 이동
+				} else {
+					location.replace(retUrl);
+				}
+			}
+		});
+		*/
+    });
+}
+
+/**
+ * 회원전용인 경우 처리
+ *   - ajax호출시 회원전용인 경우 로그인 체크 및 로그인페이지 이동처리
+ */
+var setMemberOnly = function() {
+    var loginChk = false;
+	
+	$.ajax({
+        type: "POST",
+        url: "/my/getMemberOnlyAjax.json",
+        dataType: "json",
+        async : false ,
+        success:function(data) {
+            if(data == null || data.isLogin == false) {
+            	var href		= $(location).attr('href');
+            	/*var queryString = $(location).attr('search');
+            	if(null != queryString && queryString != '') {
+            		href = href+'?'+queryString;
+            	}*/
+            	location.href='/mb/login.do?retUrl='+encodeURIComponent(href);
+            	loginChk = true;
+            }
+        }
+    });
+	return loginChk;
+}
+
+/**
+ * WEB-APP간 인터페이스
+ * @param funcName		호출할 함수명
+ * @param paramObj		전달할 파라미터
+ * @param callbackFunc	콜백받을 함수명
+ */
+var interfaceAppData = function(funcName, paramObj, callbackFunc) {
+
+	//APP에 전달할 object 설절
+	var obj = {
+		        name     : funcName,
+		        param    : paramObj,
+		        callback : callbackFunc
+        	   };
+    //IOS인 경우 처리
+    if (_isAppIOS) {
+        if(typeof webkit !== "undefined") {
+
+        	webkit.messageHandlers.callNative.postMessage(obj);
+        }
+    //ANDROID인 경우    
+    } else if (_isAppAndroid) {
+    	if( window.TsJSInterface != undefined) {
+            window.TsJSInterface.callNative(JSON.stringify(obj));
+        }
+    } else {
+    	toastAlert("정확한 앱정보가 없습니다.");
+    }
+}
+
+/**
+ * WEB-APP간 인터페이스(애드브릭스용도=TAGGING)
+ * @param funcName		호출할 함수명
+ * @param paramObj		전달할 파라미터
+ */
+var interfaceAdBrixData = function(funcName, paramObj) {
+    var strParam = '';
+    if(paramObj != undefined && paramObj != null && paramObj != '') {
+        strParam = JSON.stringify(paramObj);
+    }
+    
+    try {
+        //IOS인 경우 처리
+        if (_isAppIOS) {
+            if(_isAdBrixIOS == false || typeof webkit == 'undefined') {
+                return;
+            }
+            var requestParam = {
+                    name : funcName
+                  , param: paramObj || {}
+            };
+            webkit.messageHandlers.adbrix.postMessage(requestParam);
+            /*
+            var url = 'adbrix://' + funcName + '?' + encodeURIComponent(strParam);
+            if($('body').length > 0 && $('#adBrixIframe').length == 0) {
+                // IFRAME이 없는 경우 IFRAME 생성후 전송
+                $('body').append('<iframe id="adBrixIframe" src="' + url + '" style="display: none;" />');
+            } else {
+                $('#adBrixIframe').attr('src', url);
+            }
+            */
+        //ANDROID인 경우
+        } else if (_isAppAndroid) {
+            if(_isAdBrixAndroid == false) {
+                return;
+            }
+            if(window.adbrix != undefined) {
+                if(strParam == '') {
+                    window.adbrix[funcName]();
+                } else {
+                    window.adbrix[funcName](strParam);
+                }
+            }
+        } else {
+            if(_isAdBrixAndroid == false) {
+                return;
+            }
+            console.log('[ADBRIX] %s : %o\n%s', funcName, paramObj, strParam);
+            toastAlert('정확한 앱정보가 없습니다.');
+        }
+    } catch(e) {
+        console.log('ADBRIX ERROR');
+    }
+}
+
+
+// os 구분(ios, android, 그 외)
+var osInfo = navigator.userAgent.match(/Android/i) ? "android" : navigator.userAgent.match(/(ipod|iphone|ipad)/i) ? "ios" : "";
+
+// 접근 장비 구분 (추후 모바일 앱 추가 필요)
+var accessDevice = navigator.userAgent.match(/(ipod|iphone|ipad|Android)/i) ? "MOBILE_WEB" : "PC_WEB";
+
+var deferred;
+
+/**
+ * 내위치정보 조회 및 설정
+ * web/app 설정따라 변경
+ * IOS/ANDROID 설정따라 변경
+ */
+var loadPost = function() {	
+	deferred = $.Deferred();
+	//console.log("isApp >>>>>>>>>>>>>>"+_isApp)
+	isLocationResolved = false; // 앱 위치 3초 초과시 기본위치 사용 추가
+	//APP인 경우 처리
+	if(_isApp) {
+
+		locationTimer = setTimeout(function() { // 앱 위치 3초 초과시 기본위치 사용 추가
+			if (!isLocationResolved) { // 앱 위치 3초 초과시 기본위치 사용 추가
+				console.log("앱 위치 3초 초과 → 기본 위치 사용"); // 앱 위치 3초 초과시 기본위치 사용 추가
+				isLocationResolved = true; // 앱 위치 3초 초과시 기본위치 사용 추가
+				deferred.resolve(); // 앱 위치 3초 초과시 기본위치 사용 추가
+				toastAlert("위치정보가 확인되지 않아 임의 위치로 검색됩니다."); // 앱 위치 3초 초과시 기본위치 사용 추가
+			} // 앱 위치 3초 초과시 기본위치 사용 추가
+		}, 3000); // 앱 위치 3초 초과시 기본위치 사용 추가
+		
+		setTimeout(function() {
+			if(_isAppAndroid){
+		    	// 앱배포시  getLocation -> getLocation2 변경이 필요함
+				interfaceAppData('getLocation2', null, 'setLocationFromAPP');
+				// interfaceAppData('getLocation', null, 'setLocationFromAPP');
+			}else{
+				interfaceAppData('getLocation', null, 'setLocationFromAPP');
+			}
+		}, 10);
+	}
+	//WEB인 경우
+	else {		
+		setTimeout(function() {
+			//AIzaSyA0yah-CkBuc-aemlDxIMxizTq7zYT_2hk
+	    	
+	    	if("geolocation" in navigator) {
+				//console.log("geolocation is here >>>>>>>>>>>>>>")
+	    		if (navigator.geolocation) {					
+			    	navigator.geolocation.getCurrentPosition(
+			    			function(pos) //정상 
+			    			{
+					    		twosome.setLocInfo(pos.coords);
+					    		deferred.resolve();	
+			    			},
+			    			function(err)	//오류
+			    			{
+			    				console.log("getCurrentPosition 오류발생 111>>>>>>>>>>>>>>"+err.message);
+			    				toastAlert("위치정보 수신이 원활하지 않습니다.");
+			    				deferred.resolve();	
+			    			},
+			    			{maximumAge: Infinity, timeout: 100, enableHighAccuracy: false}
+			    	);
+		    	}
+		    	else {
+		    		console.log("navigator.geolocation 오류발생 >>>>>>>>>>>>>>"+navigator.geolocation);
+		    		toastAlert("이 브라우저는 Geolocation를 지원하지 않습니다");
+		    		deferred.resolve();	
+		        }
+	    	}
+	    	else {
+	    		console.log(" 위치정보 수신 불가 !!!!!!!!!!!!!");
+	    		deferred.resolve();	
+	    	}
+	    }, 10);
+	}
+	//return false;
+	return deferred.promise();
+}
+
+/**
+ * 내위치정보 조회 및 설정
+ * web/app 설정따라 변경
+ * IOS/ANDROID 설정따라 변경
+ */
+var loadPostNone = function() {	
+	deferred = $.Deferred();
+	//console.log("isApp >>>>>>>>>>>>>>"+_isApp)
+	isLocationResolved = false; // 앱 위치 3초 초과시 기본위치 사용 추가
+	//APP인 경우 처리
+	if(_isApp) {
+
+		locationTimer = setTimeout(function() { // 앱 위치 3초 초과시 기본위치 사용 추가
+			if (!isLocationResolved) { // 앱 위치 3초 초과시 기본위치 사용 추가
+				console.log("앱 위치 3초 초과 → 기본 위치 사용"); // 앱 위치 3초 초과시 기본위치 사용 추가
+				isLocationResolved = true; // 앱 위치 3초 초과시 기본위치 사용 추가
+				deferred.resolve(); // 앱 위치 3초 초과시 기본위치 사용 추가
+				toastAlert("위치정보가 확인되지 않아 임의 위치로 검색됩니다."); // 앱 위치 3초 초과시 기본위치 사용 추가
+			} // 앱 위치 3초 초과시 기본위치 사용 추가
+		}, 3000); // 앱 위치 3초 초과시 기본위치 사용 추가
+		
+		setTimeout(function() {
+			if(_isAppAndroid){
+		    	// 앱배포시  getLocation2 -> popLocation 변경이 필요함
+				// interfaceAppData('popLocation', null, 'setLocationFromAPP');
+				//interfaceAppData('getLocation2', null, 'setLocationFromAPP');
+				interfaceAppData('popLocation', null, 'setLocationFromAPP');
+			}else{
+				//interfaceAppData('getLocation', null, 'setLocationFromAPP');
+				interfaceAppData('popLocation', null, 'setLocationFromAPP');
+			}
+		}, 10);
+	}
+	//WEB인 경우
+	else {		
+		setTimeout(function() {
+			//AIzaSyA0yah-CkBuc-aemlDxIMxizTq7zYT_2hk
+	    	
+	    	if("geolocation" in navigator) {
+				//console.log("geolocation is here >>>>>>>>>>>>>>")
+	    		if (navigator.geolocation) {					
+			    	navigator.geolocation.getCurrentPosition(
+			    			function(pos) //정상 
+			    			{
+					    		twosome.setLocInfo(pos.coords);
+					    		deferred.resolve();	
+			    			},
+			    			function(err)	//오류
+			    			{
+			    				console.log("getCurrentPosition 오류발생 111>>>>>>>>>>>>>>"+err.message);
+			    				toastAlert("위치정보 수신이 원활하지 않습니다.");
+			    				deferred.resolve();	
+			    			},
+			    			{maximumAge: Infinity, timeout: 100, enableHighAccuracy: false}
+			    	);
+		    	}
+		    	else {
+		    		console.log("navigator.geolocation 오류발생 >>>>>>>>>>>>>>"+navigator.geolocation);
+		    		toastAlert("이 브라우저는 Geolocation를 지원하지 않습니다");
+		    		deferred.resolve();	
+		        }
+	    	}
+	    	else {
+	    		console.log(" 위치정보 수신 불가 !!!!!!!!!!!!!");
+	    		deferred.resolve();	
+	    	}
+	    }, 10);
+	}
+	//return false;
+	return deferred.promise();
+}
+
+/*var apiGeolocationSuccess = function(position) {
+    alert("API geolocation success!\n\nlat = " + position.coords.latitude + "\nlng = " + position.coords.longitude);
+};
+*/
+/*var tryAPIGeolocation = function() {
+    
+	$.ajax({
+		crossOrigin: true,
+		type: 'POST',
+		url: "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyA0yah-CkBuc-aemlDxIMxizTq7zYT_2hk",
+		success: function(){
+			  console.log(success);
+		  }
+	})
+	
+	jQuery.post( "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyA0yah-CkBuc-aemlDxIMxizTq7zYT_2hk", function(success) {
+        apiGeolocationSuccess({coords: {latitude: success.location.lat, longitude: success.location.lng}});
+  })
+  .fail(function(err) {
+    alert("API Geolocation error! \n\n"+err);
+  });
+};*/
+
+
+/**
+ * 앱에서 위치정보 수신
+ */
+var setLocationFromAPP = function(location) {
+
+	if (!isLocationResolved) { // 앱 위치 3초 초과시 기본위치 사용 추가
+		isLocationResolved = true; // 앱 위치 3초 초과시 기본위치 사용 추가
+		clearTimeout(locationTimer); // 앱 위치 3초 초과시 기본위치 사용 추가
+
+		if(location != null && typeof location !== 'undefined') {
+			twosome.setLocInfo(location.result);
+		} else {
+			console.log("앱 위치값 없음 → 기본값 사용"); // 앱 위치 3초 초과시 기본위치 사용 추가
+		}
+
+		deferred.resolve();	
+	}
+/* 기존로직 그대로 놔둠
+	if(location != null && typeof location !== 'undefined') {
+		twosome.setLocInfo(location.result);
+		deferred.resolve();	
+	}
+	else {
+		toastAlert("해당 APP에서 위치정보 수신 불가!");
+    }
+*/
+}
+
+/**
+ * 키보드에서 이모지 제거
+ * @returns
+ */
+$(document).on("focusout", "input[type='text']", function(e){
+	if ($(this).is('#porsche_serv')) {
+		return;  // 제외 처리
+	}
+	var regex = RegExp(/(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g);
+	//var regex = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
+	var str = $(this).val();
+	//console.log(str);
+	//console.log(regex)
+	
+	if(regex.test(str)) {
+		$(this).val(str.replace(regex, ''));
+		alert("이모티콘을 입력할 수 없습니다.");
+	}
+});
+
+/**
+ * 설문 참여 가능 회원 설문 정보 조회
+ */
+var surveyMbr = function() {
+    $.ajax({
+        type: "POST",
+        url: "/ts/surveyMbrInfo.json",
+        dataType: "json",
+        data: {},
+        success:function(data) {
+//        	console.log("설문 참여 호출 결과 - " + JSON.stringify(data));
+            if(data.rst == 'S' && data.rstCd == '000'){
+                $("#surveyUrlInfo").val(data.survUrl); // 설문URL
+                $("#survNo").val(data.survNo); // 설문URL
+                $(".survey_box").show();
+                document.cookie = "surveyYn=Y; max-age=" + (5*60) + "; path=/"; // surveyYn쿠키 유지시간 셋팅(초단위)
+                document.cookie = "survUrl=" + data.survUrl + "; max-age=" + (5*60) + "; path=/"; // survUrl쿠키 유지시간 셋팅(초단위)
+                document.cookie = "survNo=" + data.survNo + "; max-age=" + (5*60) + "; path=/"; // survNo쿠키 유지시간 셋팅(초단위)
+                $("#divMainStripBanner").hide();
+            } else{
+                $("#surveyUrlInfo").val(""); // 설문URL
+                $("#survNo").val(""); // 설문URL
+            	$(".survey_box").hide();
+//            	document.cookie = 'surveyYn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';// surveyYn쿠키 제거
+//            	document.cookie = 'survUrl=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';// survUrl쿠키 제거
+
+                document.cookie = "surveyYn=Y; max-age=" + (5*60) + "; path=/"; // surveyYn쿠키 유지시간 셋팅(초단위)
+                document.cookie = "survUrl=; max-age=" + (5*60) + "; path=/"; // survUrl쿠키 유지시간 셋팅(초단위)
+                document.cookie = "survNo=; max-age=" + (5*60) + "; path=/"; // survNo쿠키 유지시간 셋팅(초단위)
+                $("#divMainStripBanner").show();
+            }
+        },
+        error:function(e){
+        },
+        complete:function(e){
+        }
+    });
+}
+
+/**
+ * 설문 참여 가능 회원 개인화 처리
+ */
+var surveyLink = function(typeCd) {
+	$.ajax({
+        type: "POST",
+        url: "/ts/surveyProfileAjax.json",
+        dataType: "json",
+		data: { "survNo": $("#survNo").val()
+			  , "acsGubn": typeCd},
+		complete: function() {
+		    // 성공/실패 상관없이 무조건 실행
+		    location.href = $("#surveyUrlInfo").val();
+		}
+	});
+}
+
+
+/**
+ * 정보보호 동의하기 확인처리
+ */
+var agreeMbr = function(typeCd) {
+    $.ajax({
+        type: "POST",
+        url: "/ev/chkTermEventDetailAjax.json",
+        dataType: "json",
+		data: {
+			"agreeVerNo" : "",
+			"agreeTypeCd" : [typeCd]
+		},
+        success:function(data) {
+        	//console.log("정보보호 동의여부 체크 호출 결과 - " + JSON.stringify(data));
+            if(data.rst == 'S' && data.rstCd == '000'){
+            	if(data.agreYn =='N'){
+            		openPopLayer('#layer_term1');
+            	}else{
+            		document.cookie = "agreeB2Yn=Y; max-age=" + (30*24*60*60) + "; path=/"; // agreeB2Yn쿠키 유지시간 셋팅(초단위)
+            	}
+            }
+        },
+        error:function(e){
+        },
+        complete:function(e){
+        }
+    });
+}
+
+
