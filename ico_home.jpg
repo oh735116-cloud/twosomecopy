@@ -1,0 +1,6 @@
+<svg id="home" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <rect id="area" width="24" height="24" fill="red" opacity="0"/>
+  <g id="icon" transform="translate(0 0)">
+    <path id="패스_4160" data-name="패스 4160" d="M21.676,22.98h-16v-9.5l8-8.5,8,8.5Z" transform="translate(-1.677 -1.979)" fill="none" stroke="#000" stroke-miterlimit="10" stroke-width="1.2"/>
+  </g>
+</svg>

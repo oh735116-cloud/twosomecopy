@@ -1,0 +1,209 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+a {
+  text-decoration: none;
+}
+/* img {
+  width: auto;
+  height: auto;
+} */
+body {
+  font-family: var(--font-family-base);
+  background: var(--color-bg);
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  /* ★ fixed 헤더 + 하단 탭바 공간 확보 */
+  /* header */
+}
+ul,
+ol {
+  list-style: none;
+}
+
+header {
+  position: relative;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.9);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  position: fixed;
+  z-index: 100;
+}
+.header-btn {
+  background: none;
+  border: 0 solid var(--color-border);
+  padding: 14px;
+}
+.header-logo {
+  font-size: 13px;
+  font-weight: 600;
+  border: 0 solid var(--color-border);
+  background: none;
+  color: var(--color-text);
+  cursor: pointer;
+  position: absolute;
+  padding: 18px;
+  left: 50%;
+  transform: translate(-50%);
+}
+
+/* /main/ */
+/* 첫번째 섹션 사진 회원가입 로그인 */
+#first-section {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg);
+  width: 100%;
+  height: 100%;
+}
+.page {
+  position: relative;
+  top: 50px;
+  background: var(--color-bg-alt);
+}
+.page img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.pagein {
+  background: rgb(109, 109, 109, 0.7);
+  width: 40px;
+  height: 25px;
+  border: none;
+  border-radius: 45%;
+  top: 70px;
+  right: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-bg);
+  position: absolute;
+}
+
+.login {
+  background-color: var(--color-bg-alt);
+  padding-top: 0;
+  height: 100px;
+  border: 0 solid var(--color-bg-alt);
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 50px;
+}
+.login-twosome {
+  display: flex;
+  flex-direction: row;
+  gap: 3px;
+  margin-top: var(--spacing-lg);
+}
+.twosome-app {
+  background: var(--color-bg-alt);
+  padding-left: 20px;
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+}
+.login-app {
+  background: var(--color-bg-alt);
+  padding-left: 20px;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+/* 두번쨰 섹션 투썸을 선물하세요 */
+.present {
+  display: flex;
+  justify-content: space-between;
+  padding: 30px 20px 20px 10px;
+  background: var(--color-bg);
+}
+.present-yo {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  margin-left: var(--spacing-xs);
+}
+.present-more {
+  border: 0;
+  cursor: pointer;
+  background: var(--color-bg);
+  font-weight: var(--font-weight-medium);
+}
+
+.money {
+  display: flex;
+  justify-content: space-between;
+  box-sizing: 10px;
+  padding: 10px;
+}
+.mo {
+  border: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xs);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--spacing-md);
+  cursor: pointer;
+}
+.mo:focus {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+/* 투섬선물이미지태그 */
+.menu-ui {
+  display: flex;
+  gap: px;
+}
+ul > li {
+  padding-left: 20px;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgb(255, 255, 255);
+}
+
+.footer-nav {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 5px;
+}
+.nav-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 5px;
+}
+.nav-text {
+  text-decoration: none;
+  color: black;
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+}
+
+.nav-event-counter {
+  font-weight: 700;
+  font-size: 10px;
+  position: relative;
+  right: -30px;
+  top: -43px;
+  background: red;
+  color: aliceblue;
+  width: 13px;
+}

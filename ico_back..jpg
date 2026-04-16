@@ -1,0 +1,7 @@
+<svg id="back" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <rect id="area" width="24" height="24" fill="red" opacity="0"/>
+  <g id="icon" transform="translate(11.1 48)">
+    <path id="Path_11" data-name="Path 11" d="M8,16,0,8,8,0" transform="translate(-8.1 -43.999)" fill="none" stroke="#000" stroke-miterlimit="10" stroke-width="1.2"/>
+    <path id="Path_12" data-name="Path 12" d="M0,.45H18" transform="translate(-8.099 -36.45)" fill="none" stroke="#000" stroke-miterlimit="10" stroke-width="1.2"/>
+  </g>
+</svg>
